@@ -12,10 +12,10 @@ import {
   withAuthenticator,
 } from "@aws-amplify/ui-react";
 import { listTodos } from "./graphql/queries";
-// import {
-//   createTodo,
-//   deleteTodo
-// } from "./graphql/mutations";
+import {
+  createTodo as createTodoMutation,
+  deleteTodo as deleteTodoMutation
+} from "./graphql/mutations";
 import { generateClient } from 'aws-amplify/api';
 import { uploadData, getUrl, remove } from 'aws-amplify/storage';
 
@@ -46,18 +46,17 @@ const App = ({ signOut }) => {
   async function createTodo(event) {
     event.preventDefault();
     const form = new FormData(event.target);
-    const image = form.get("image");
     const data = {
       name: form.get("name"),
       description: form.get("description"),
-      image: image.name,
+      image: form.get("image")
     };
     if (!!data.image) await uploadData({
       key: data.name,
-      data: image
+      data: data.image
     });
     await client.graphql({
-      query: createTodo,
+      query: createTodoMutation,
       variables: { input: data },
     });
     fetchNotes();
@@ -69,7 +68,7 @@ const App = ({ signOut }) => {
     setNotes(newNotes);
     await remove({ key: name });
     await client.graphql({
-      query: createTodo,
+      query: deleteTodoMutation,
       variables: { input: { id } },
     });
   }
