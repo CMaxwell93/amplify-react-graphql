@@ -34,7 +34,7 @@ const App = ({ signOut }) => {
     await Promise.all(
       notesFromAPI.map(async (note) => {
         if (note.image) {
-          const url = getUrl({ key: note.name })
+          const url = await getUrl({ key: note.name })
           note.image = url.url
         }
         return note;
@@ -94,6 +94,12 @@ const App = ({ signOut }) => {
             variation="quiet"
             required
           />
+          <View
+            name="image"
+            as="input"
+            type="file"
+            style={{ alignSelf: "end" }}
+          />
           <Button type="submit" variation="primary">
             Create Note
           </Button>
@@ -125,12 +131,6 @@ const App = ({ signOut }) => {
           </Flex>
         ))}
       </View>
-      <View
-        name="image"
-        as="input"
-        type="file"
-        style={{ alignSelf: "end" }}
-      />
       <Button onClick={signOut}>Sign Out</Button>
     </View>
   );
